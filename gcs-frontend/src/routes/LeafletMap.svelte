@@ -29,7 +29,7 @@
         }
 
         const body = await response.json();
-        console.log(`Fetch waypoints success. Waypoints : ${body}`);
+        console.log("Fetch waypoints success. Waypoints:", body);
         return body;
     }
 
