@@ -11,7 +11,7 @@
     crossorigin="">
 
     import AksantaraMarker from '$lib/images/aksantara.svg';
-    import { waypoints } from '$lib/types/waypoint';
+    import { waypoints, payloadWaypoints } from '$lib/types/waypoint';
     import type { Waypoint } from '$lib/types/waypoint';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import { onMount } from "svelte";
@@ -60,7 +60,7 @@
 
             const value = await response.json()
             console.log(`Fetch altitude success. Altitude : ${value.elevation}`);
-            return value.elevation
+            return value.elevation[0]
         }
 
         
@@ -109,11 +109,11 @@
             console.log("You clicked the map at " + e.latlng);
             const lat = e.latlng.lat;
             const long = e.latlng.lng;
-            const alt = await getAltitude(lat, long)
+            const alt = await getAltitude(lat, long);
 
             // create new waypoint
             const new_wp : Waypoint = {
-                waypoint_id : "",
+                waypoint_id : 1,
                 waypoint_name : "Dummy Test Waypoint",
                 waypoint_lat : lat,
                 waypoint_lng : long,
@@ -122,6 +122,7 @@
 
             // add into waypoints
             waypoints.update(wps => [...wps, new_wp]);
+            payloadWaypoints.update(wps => [...wps, new_wp]);
 
             // add marker
             L.marker([lat, long], { icon: aksantaraIcon })

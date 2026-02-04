@@ -1,6 +1,6 @@
 
 <script lang="ts">
-    import { waypoints } from "$lib/types/waypoint";
+    import { payloadWaypoints, waypoints } from "$lib/types/waypoint";
     import type { Waypoint } from "$lib/types/waypoint";
 
     // function to submit to backend
@@ -10,14 +10,11 @@
         console.log(`Submitting waypoints : ${apiUrl}`);
 
         // constructing the body
-        const content : Waypoint[] = $waypoints;
+        const content : Waypoint[] = $payloadWaypoints;
         console.log("Body : ", content);
 
         const response = await fetch(apiUrl, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body : JSON.stringify(content)
         });
 
@@ -33,12 +30,20 @@
         let target_wp = $waypoints.find(wp => (wp.waypoint_lat === lat) && (wp.waypoint_lng === lng) && (wp.waypoint_alt === alt));
         if (target_wp) {
             let old_name = target_wp.waypoint_name;
+            // edit waypoints
             waypoints.update(wps =>
                 wps.map(wp =>
                     (wp.waypoint_lat === lat) && (wp.waypoint_lng === lng) && (wp.waypoint_alt === alt) ? { ...wp, waypoint_name: new_name } : wp
                 )
             );
-            console.log(`Update success. Changed name from ${old_name} to ${name}`);
+            console.log(`Update waypoints success. Changed name from ${old_name} to ${name}`);
+            // edit payloadWaypoints
+            payloadWaypoints.update(wps =>
+                wps.map(wp =>
+                    (wp.waypoint_lat === lat) && (wp.waypoint_lng === lng) && (wp.waypoint_alt === alt) ? { ...wp, waypoint_name: new_name } : wp
+                )
+            );
+            console.log(`Update payload waypoints success. Changed name from ${old_name} to ${name}`);
         }
         console.log(`Not find any such waypoint in the current store. Lat : ${lat}. Long : ${lng}. Alt : ${alt}.`);
     }
@@ -46,6 +51,9 @@
     // function to delete from the current waypoint
     async function deleteWaypoint(lat: number, lng : number, alt : number) {
         waypoints.update(wps =>
+            wps.filter(wp => (wp.waypoint_lat !== lat) && (wp.waypoint_lng !== lng) && (wp.waypoint_alt !== alt))
+        );
+        payloadWaypoints.update(wps =>
             wps.filter(wp => (wp.waypoint_lat !== lat) && (wp.waypoint_lng !== lng) && (wp.waypoint_alt !== alt))
         );
         console.log(`Deleted waypoint. Lat : ${lat}. Long : ${lng}. Alt : ${alt} `);

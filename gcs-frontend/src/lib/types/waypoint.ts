@@ -3,7 +3,7 @@
 import { writable } from "svelte/store"
 
 export interface Waypoint {
-    waypoint_id : string,
+    waypoint_id : number,
     waypoint_name : string,
     waypoint_lat : number,
     waypoint_lng :  number,
@@ -18,3 +18,4 @@ export interface Waypoint {
 // }
 
 export const waypoints = writable<Waypoint[]>([]);
+export const payloadWaypoints = writable<Waypoint[]>([]); // this is the array for the send ones

@@ -30,7 +30,7 @@ func main() {
 	router.POST("/waypoints", func(c *gin.Context) {
 		var waypoints []models.Waypoint
 
-		// Parse JSON body
+		// parsing
 		if err := c.ShouldBindJSON(&waypoints); err != nil {
 			c.JSON(400, gin.H{
 				"error": err.Error(),
@@ -38,7 +38,7 @@ func main() {
 			return
 		}
 
-		// Insert into DB
+		// insert into DB
 		count := controller.InsertWaypoints(waypoints)
 		fmt.Println(count)
 
