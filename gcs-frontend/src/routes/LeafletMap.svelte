@@ -15,6 +15,7 @@
     import type { Waypoint } from '$lib/types/waypoint';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import { onMount } from "svelte";
+	import type { Map } from 'leaflet';
 
     // function for get the altitude using fetch api to another website
     async function fetchWaypoints() {
@@ -41,7 +42,7 @@
     })
     
     // ======================== map functionalities =============================
-    let map;
+    let map : Map;
     
     onMount(async () => {
 
@@ -62,33 +63,18 @@
             return value.elevation
         }
 
-
-        // define functions for clicking
-        async function onMapClick(e : any) {
-            
-            // split the data
-            console.log("You clicked the map at " + e.latlng);
-            const lat = e.latlng.lat;
-            const long = e.latlng.lng;
-            const alt = await getAltitude(lat, long)
-
-            // create new waypoint
-            const new_wp : Waypoint = {
-                waypoint_id : "",
-                waypoint_name : "Dummy Test Waypoint",
-                waypoint_lat : lat,
-                waypoint_lng : long,
-                waypoint_alt : alt
-            }
-
-            // add into waypoints
-            waypoints.update(wps => [...wps, new_wp]);
-        }
-
+        
         // Initialize the map
         const L = await import("leaflet");
         map = L.map('map')
         
+        const aksantaraIcon = L.icon({
+            iconUrl: AksantaraMarker,
+            iconSize: [50, 50],        
+            iconAnchor: [16, 32],     
+            popupAnchor: [0, -32]
+        });
+
         // Get the tile layer from OpenStreetMaps
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         
@@ -115,7 +101,34 @@
 
         // set click function to map
         map.on('click', onMapClick);
-        
+
+        // define functions for clicking
+        async function onMapClick(e : any) {
+            
+            // split the data
+            console.log("You clicked the map at " + e.latlng);
+            const lat = e.latlng.lat;
+            const long = e.latlng.lng;
+            const alt = await getAltitude(lat, long)
+
+            // create new waypoint
+            const new_wp : Waypoint = {
+                waypoint_id : "",
+                waypoint_name : "Dummy Test Waypoint",
+                waypoint_lat : lat,
+                waypoint_lng : long,
+                waypoint_alt : alt
+            }
+
+            // add into waypoints
+            waypoints.update(wps => [...wps, new_wp]);
+
+            // add marker
+            L.marker([lat, long], { icon: aksantaraIcon })
+                .addTo(map)
+                .bindPopup(new_wp.waypoint_name);
+        }
+
     })
 
 
