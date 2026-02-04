@@ -14,6 +14,7 @@ A ground control station for doing connection, controlling, and monitoring of Un
 - Node JS (v22.14.0)
 - Bun (v1.3.5)
 - Leaflet.js
+- Docker Engine + Docker (intinya docker)
 
 # How to run
 ## Frontend
@@ -21,6 +22,9 @@ A ground control station for doing connection, controlling, and monitoring of Un
 2. `bun run dev --open` (flag --open digunakan untuk menampilkan log yang lebih rinci)
 ## Backend
 2. `go run main.go`
+
+# How to run using Docker
+1. `docker compose up --build` atau `docker compose up` kalau mau lebih cepet.
 
 # Author
 > Brian A. Hadian (13523048)
