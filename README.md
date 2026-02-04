@@ -15,6 +15,13 @@ A ground control station for doing connection, controlling, and monitoring of Un
 - Bun (v1.3.5)
 - Leaflet.js
 
+# How to run
+## Frontend
+1. `bun install`
+2. `bun run dev --open` (flag --open digunakan untuk menampilkan log yang lebih rinci)
+## Backend
+2. `go run main.go`
+
 # Author
 > Brian A. Hadian (13523048)
 
@@ -27,5 +34,7 @@ A ground control station for doing connection, controlling, and monitoring of Un
 https://stackoverflow.com/questions/62374265/svelte-with-leaflet
 - https://leafletjs.com/examples/quick-start/
 - https://leafletjs.com/reference.html
+- https://stackoverflow.com/questions/13142635/how-can-i-create-an-object-based-on-an-interface-file-definition-in-typescript
+- https://stackoverflow.com/questions/67873142/how-to-listen-the-state-changes-in-svelte-like-useeffect
 
 # Notes

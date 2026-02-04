@@ -10,12 +10,41 @@
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin="">
 
+    import AksantaraMarker from '$lib/images/aksantara.svg';
+    import { waypoints } from '$lib/types/waypoint';
+    import type { Waypoint } from '$lib/types/waypoint';
+    import Sidebar from '$lib/components/Sidebar.svelte';
     import { onMount } from "svelte";
 
-    let map;
+    // function for get the altitude using fetch api to another website
+    async function fetchWaypoints() {
+        // Construct the API URL
+        const apiUrl = `http://127.0.0.1:9090/waypoints`;
+        console.log(`Fetching waypoints : ${apiUrl}`);
 
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+            console.log(`Response not ok : ${response.status}`)
+        }
+
+        const body = await response.json();
+        console.log(`Fetch waypoints success. Waypoints : ${body}`);
+        return body;
+    }
+
+    // ========================= init (get the db first) ==========================
+    onMount(async () => {
+        // init (get the db at first)
+        const data = await fetchWaypoints();
+        waypoints.set(data);
+    })
+    
+    // ======================== map functionalities =============================
+    let map;
     
     onMount(async () => {
+
         // function for get the altitude using fetch api to another website
         async function getAltitude(lat : number, lng : number) {
             // Construct the API URL
@@ -29,17 +58,31 @@
             }
 
             const value = await response.json()
-            console.log(`Altitude : ${value.elevation}`);
-            alert("Altitude Fetch Success");
+            console.log(`Fetch altitude success. Altitude : ${value.elevation}`);
+            return value.elevation
         }
 
 
         // define functions for clicking
         async function onMapClick(e : any) {
+            
+            // split the data
             console.log("You clicked the map at " + e.latlng);
             const lat = e.latlng.lat;
             const long = e.latlng.lng;
-            await getAltitude(lat, long)
+            const alt = await getAltitude(lat, long)
+
+            // create new waypoint
+            const new_wp : Waypoint = {
+                waypoint_id : "",
+                waypoint_name : "Dummy Test Waypoint",
+                waypoint_lat : lat,
+                waypoint_lng : long,
+                waypoint_alt : alt
+            }
+
+            // add into waypoints
+            waypoints.update(wps => [...wps, new_wp]);
         }
 
         // Initialize the map
@@ -58,7 +101,7 @@
         
         // Set the view of the map
         // with the latitude, longitude and the zoom value
-        map.setView([48.8584, 2.2945], 16);
+        // map.setView([48.8584, 2.2945], 16);
         
         // Set the map view to the user's location
         // Uncomment below to set map according to user location
@@ -78,9 +121,24 @@
 
 </script>
 
-<div id="map" style="width: 960px; height: 60vh"></div>
+<div class="map-wrapper">
+    <div id="map" >
+    </div>
+    <div id="sidebar-container">
+        <Sidebar />
+    </div>
+</div>
 
 <!-- css lah pokoknya -->
 <style>
-    /* css stuff */
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .map-wrapper {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+    }
 </style>
